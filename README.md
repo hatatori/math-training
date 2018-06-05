@@ -1,1 +1,1 @@
-# math-training
+https://hatatori.github.io/math-training/
