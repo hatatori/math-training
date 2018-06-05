@@ -1,0 +1,283 @@
+<style>
+*{
+	font-family: monospace;
+	
+	color: white;
+	font-size: 16px
+	padding:0;
+	margin: 0;
+}
+input[type="text"]{
+	width: 50;
+	height: 50;
+	margin:10;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	border: 1px solid white;
+	outline: none;
+}
+
+body{
+	padding: 10;
+	background-color: black;
+}
+
+button{
+	width: 30px;
+	height: 30px;
+	border: none;
+}
+
+div > div{
+	padding: 5;
+}
+
+.correct{color: green;display: inline-table; margin:10; color: black;}
+
+
+#ct{
+	width: 1000;
+	height: 200;
+	background-color: #111;
+	margin:10;
+	transform: rotateX(180deg);
+
+}
+
+line{
+	stroke:rgb(255,0,0);
+	stroke-width:1;
+
+}
+
+.correct:nth-child(2n){
+	background-color: #9AFE2E;
+	color: black;
+}
+.correct:nth-child(2n+1){
+	background-color: #74DF00;
+	color: black;
+}
+
+.incorrect{	margin:10; ; display: inline-block; }
+
+.incorrect:nth-child(2n){
+	background-color: #8B2500;	
+
+}
+
+
+#ac{color: black; width: 150;}
+#er{width: 150;}
+
+.incorrect:nth-child(2n+1){
+	background-color: #8B1A1A;
+}
+
+#tempos{
+	
+	display: block;
+	height: 200;
+	overflow-y: scroll; 
+}
+
+span{
+	display: inline-block;
+}
+
+#tempos span:nth-child(2n){
+	
+	padding: 5;
+	width: 50;
+	margin:1;
+	
+	text-align: center;
+}
+
+#tempos span:nth-child(2n+1){
+	width: 50;
+	
+	padding: 5;
+	margin:1;
+	
+	text-align: center;
+}
+
+
+#media{
+	background-color: #DBA901;
+	color: black;
+	display: inline-block;
+	padding: 10;
+	margin: 10;
+
+}
+
+input,button{
+	color: white;
+	background-color: black;
+
+}
+
+</style>
+
+<input type="text" id=p1><button id="bt">*</button><input type="text" id=p2><button>=</button><input type="text" id=p3 autofocus="">
+<br><br>
+Quantidade : <span id="quant">0</span>
+
+<div>
+	<div class="correct">acertos: <span id="ac">0</span></div><br>
+	<div class="incorrect">erros: <span id="er">0</span></div>
+	<div id="tim">0</div>
+</div>
+
+
+<br>
+<div id="tempos"></div>
+<br>
+<br>
+
+<div id="media"></div>
+
+
+<script>
+	
+	bt.onclick=function(){
+		v = this.innerHTML
+		if(v == "*") this.innerHTML = "/";
+		if(v == "/") this.innerHTML = "+";
+		if(v == "+") this.innerHTML = "-";
+		if(v == "-") this.innerHTML = "*";
+	}
+
+	acertos = 0
+	erros = 0
+	med = a = pos = neg = 0
+	t  = []
+	q = 0
+
+
+	p3.onkeydown	 = function(e){
+		if(e.key == "Enter"){
+
+			resultado = parseInt(p3.value)
+
+			pe1 = parseInt(p1.value)
+			pe2 = parseInt(p2.value)
+
+			if( bt.innerHTML == "*" ) resultado = resultado == pe1*pe2;
+			if( bt.innerHTML == "/" ) resultado = resultado == pe1/pe2;
+			if( bt.innerHTML == "+" ) resultado = resultado == pe1+pe2;
+			if( bt.innerHTML == "-" ) resultado = resultado == pe1-pe2;
+
+			if(resultado) ac.innerHTML = (++acertos);
+			if(!resultado) er.innerHTML = (++erros);
+
+
+			this.value = ""
+
+			t[0] = Date.now()
+			t[2] = t[0]-t[1]
+
+			tim.innerHTML = t[2]
+
+			t[1] = Date.now()
+			t[0] = t[1]
+
+
+
+			atualizarValor()
+			porcentagem()
+
+
+			rend()
+
+			quant.innerHTML = q++
+
+		}
+	}
+
+	function porcentagem(){
+		ace = parseInt(ac.innerHTML)
+		err = parseInt(er.innerHTML)
+		s = ace+err
+
+		d = ac.innerHTML.split(" ")
+		ac.innerHTML = d[0]
+
+		d = er.innerHTML.split(" ")
+		er.innerHTML = d[0]
+
+		ac.innerHTML = ac.innerHTML+" - "+((ace*100)/s).toFixed(2)+"%"
+		er.innerHTML = er.innerHTML+" - "+((err*100)/s).toFixed(2)+"%"
+	}
+
+
+
+	function atualizarValor(){
+
+		// r1 = Math.floor(Math.random() * (9 - -9) + -9)
+		// r2 = Math.floor(Math.random() * (9 - -9) + -9)
+
+		r1 = Math.floor(Math.random() * (10 - 0)) + 0;
+		r2 = Math.floor(Math.random() * (10 - 0)) + 0;
+
+
+		p1.value = r1
+		p2.value = r2
+
+	}atualizarValor()
+
+
+	n = 0
+	
+	function rend(){
+
+		p = tim.innerHTML
+
+		if(p.length < 4){
+			p = "0."+p
+			p = p.substr(0,4)
+		}else{
+			p = Math.floor(p/1000)+"."+p%1000
+			p = p.substr(0,4)
+		}
+
+		if(++n>1){
+			if(resultado)
+				tempos.innerHTML += "<span class='correct'>"+p+"</span>"
+			else
+				tempos.innerHTML += "<span class='incorrect'>"+p+"</span>"
+		}
+
+		mediaa()
+	}	
+
+	function mediaa(){
+
+    notas = tempos.innerHTML.match(/\d+.\d+/g).map( e=> parseFloat(e) )
+
+    a = 0
+    m = 0
+
+    for(i=0;i<notas.length;i++){
+
+        m += notas[i]
+
+        a++
+
+    }
+
+    m /= a
+
+	media.innerHTML = m.toFixed(2)
+
+} 
+
+
+
+
+
+</script>
