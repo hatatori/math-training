@@ -1,283 +1,205 @@
+<link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.css">
+
 <style>
-*{
-	font-family: monospace;
-	
-	color: white;
-	font-size: 16px
-	padding:0;
-	margin: 0;
-}
-input[type="text"]{
-	width: 50;
-	height: 50;
-	margin:10;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	border: 1px solid white;
-	outline: none;
-}
+	#barras *{
+		transition: 1s
+	}
+	.p10{padding: 10px;}
+	.m10{margin: 10px;}
+	.botao{
+		display: inline-block;
+		width: 100px;
+	}
 
-body{
-	padding: 10;
-	background-color: black;
-}
+	#resultados .btn{
+		position: relative;
+		margin: 2px
+	}
 
-button{
-	width: 30px;
-	height: 30px;
-	border: none;
-}
+	#resultados .btn::after{
+		color: transparent;
+		
+	}
 
-div > div{
-	padding: 5;
-}
-
-.correct{color: green;display: inline-table; margin:10; color: black;}
-
-
-#ct{
-	width: 1000;
-	height: 200;
-	background-color: #111;
-	margin:10;
-	transform: rotateX(180deg);
-
-}
-
-line{
-	stroke:rgb(255,0,0);
-	stroke-width:1;
-
-}
-
-.correct:nth-child(2n){
-	background-color: #9AFE2E;
-	color: black;
-}
-.correct:nth-child(2n+1){
-	background-color: #74DF00;
-	color: black;
-}
-
-.incorrect{	margin:10; ; display: inline-block; }
-
-.incorrect:nth-child(2n){
-	background-color: #8B2500;	
-
-}
-
-
-#ac{color: black; width: 150;}
-#er{width: 150;}
-
-.incorrect:nth-child(2n+1){
-	background-color: #8B1A1A;
-}
-
-#tempos{
-	
-	display: block;
-	height: 200;
-	overflow-y: scroll; 
-}
-
-span{
-	display: inline-block;
-}
-
-#tempos span:nth-child(2n){
-	
-	padding: 5;
-	width: 50;
-	margin:1;
-	
-	text-align: center;
-}
-
-#tempos span:nth-child(2n+1){
-	width: 50;
-	
-	padding: 5;
-	margin:1;
-	
-	text-align: center;
-}
-
-
-#media{
-	background-color: #DBA901;
-	color: black;
-	display: inline-block;
-	padding: 10;
-	margin: 10;
-
-}
-
-input,button{
-	color: white;
-	background-color: black;
-
-}
-
+	#resultados .btn:hover::after{
+		
+		color: white;
+		background-color: #212529;
+		padding: 5;
+		border-radius: 3px;
+		content:attr(data);
+		position: absolute;
+		top: -1;
+		left: -1;
+		right: -1;
+		margin: auto;
+	}
 </style>
 
-<input type="text" id=p1><button id="bt">*</button><input type="text" id=p2><button>=</button><input type="text" id=p3 autofocus="">
-<br><br>
-Quantidade : <span id="quant">0</span>
 
-<div>
-	<div class="correct">acertos: <span id="ac">0</span></div><br>
-	<div class="incorrect">erros: <span id="er">0</span></div>
-	<div id="tim">0</div>
+
+<div class="container p10">
+	
+	<div class="m10" id='escolha'>
+		<button type="button" id="mu" class="btn btn-danger" onclick="op=0;mult()">*</button>
+		<button type="button" id="di" class="btn btn-light" onclick="op=1; divi()">/</button>
+		<button type="button" id="so" class="btn btn-light" onclick="op=2; soma()">+</button>
+		<button type="button" id="su" class="btn btn-light" onclick="op=3; subt() ">-</button>
+	</div>
+
+	<br>
+
+
+	<input type="text" class="btn btn-primary btn-sm" placeholder="Username" id="a" style="width: 100">
+	<input type="text" class="btn btn-primary btn-sm" placeholder="Username" id="b" style="width: 100">
+	<br><br>
+	<input type="text" class="form-control botao" placeholder="Username" id="c">
+	<button type="button" class="btn btn-primary btn-sm">Verificar</button>
+	
+
+	<br><br>
+	<div id="barras" style="width: 400;margin-top: 10;">
+		<div class="btn btn-success btn-sm" id="g" style="width:10%">0%</div>
+		<br><br>
+		<div class="btn btn-danger btn-sm" id="r" style="width:10%">0%</div>
+	</div>
+
 </div>
 
+<div class="p10" id="resultados">
+	<!-- <button type="button" class="btn btn-danger btn-sm">23</button>
+	<button type="button" class="btn btn-dark btn-sm">10</button>
+	<button type="button" class="btn btn-success btn-sm">20</button> -->
+</div>
 
-<br>
-<div id="tempos"></div>
-<br>
-<br>
-
-<div id="media"></div>
+<script src='bootstrap/bootstrap.js'></script>
 
 
 <script>
 	
-	bt.onclick=function(){
-		v = this.innerHTML
-		if(v == "*") this.innerHTML = "/";
-		if(v == "/") this.innerHTML = "+";
-		if(v == "+") this.innerHTML = "-";
-		if(v == "-") this.innerHTML = "*";
-	}
+	ex = ['*','/','+','-']
+	es = escolha.querySelectorAll("button")
 
 	acertos = 0
 	erros = 0
-	med = a = pos = neg = 0
-	t  = []
-	q = 0
+	total = 0
 
+	// escolha.onclick=()=>{apagarTodos()}
 
-	p3.onkeydown	 = function(e){
+	escolha.onmouseup=function(e){
+
+		for(i of this.querySelectorAll("button")){
+			apagar(i)
+		}
+		
+		acender(e.target)
+	}
+	
+	function acender(bt){ 
+		if(bt.id != "escolha")
+			bt.classList.value = "btn btn-danger"
+
+	}
+
+	function apagar(bt){ bt.classList.value = "btn btn-light" }
+	
+	
+
+	function mult(){
+		valores.a = parseInt(Math.random()*10)
+		valores.b = parseInt(Math.random()*10)
+		valores.c = valores.a*valores.b
+
+		a.value = valores.a
+		b.value = valores.b
+
+		c.focus()
+
+	}
+
+	function soma(){
+		valores.a = parseInt(Math.random()*10)
+		valores.b = parseInt(Math.random()*10)
+		valores.c = valores.a+valores.b
+
+		a.value = valores.a
+		b.value = valores.b
+
+		c.focus()
+
+	}
+
+	function subt(){
+		valores.a = parseInt(Math.random()*10)
+		valores.b = parseInt(Math.random()*10)
+		valores.c = valores.a-valores.b
+
+		a.value = valores.a
+		b.value = valores.b
+
+		c.focus()
+	}
+
+	function divi(){
+		valores.b = parseInt(Math.random()*10)		
+		valores.a = parseInt(Math.random()*10)*valores.b
+		valores.c = valores.a/valores.b
+
+		a.value = valores.a
+		b.value = valores.b
+
+		c.focus()
+	}
+
+	c.onkeyup=function(e){
 		if(e.key == "Enter"){
 
-			resultado = parseInt(p3.value)
+			if(c.value == valores.c){
+				bt = document.createElement("button")
+				bt.classList.value = "btn btn-success btn-sm"
+				bt.setAttribute("data",valores.a+" "+ex[op]+" "+valores.b)
+				bt.innerHTML = valores.c+" | "+c.value
+				resultados.appendChild(bt)
+				acertos++
 
-			pe1 = parseInt(p1.value)
-			pe2 = parseInt(p2.value)
+			}
 
-			if( bt.innerHTML == "*" ) resultado = resultado == pe1*pe2;
-			if( bt.innerHTML == "/" ) resultado = resultado == pe1/pe2;
-			if( bt.innerHTML == "+" ) resultado = resultado == pe1+pe2;
-			if( bt.innerHTML == "-" ) resultado = resultado == pe1-pe2;
+			if(c.value != valores.c){
+				bt = document.createElement("button")
+				bt.classList.value = "btn btn-danger btn-sm"
+				bt.setAttribute("data",valores.a+" "+ex[op]+" "+valores.b)
+				bt.innerHTML = valores.c+" | "+c.value
+				resultados.appendChild(bt)
 
-			if(resultado) ac.innerHTML = (++acertos);
-			if(!resultado) er.innerHTML = (++erros);
+				erros++
+			}
 
+			total++
+			
+			c.value = ""
 
-			this.value = ""
+			es[op].click()
 
-			t[0] = Date.now()
-			t[2] = t[0]-t[1]
+			g.style.width = parseInt(acertos/total*100)+"%"
+			r.style.width = parseInt(erros/total*100)+"%"
 
-			tim.innerHTML = t[2]
-
-			t[1] = Date.now()
-			t[0] = t[1]
-
-
-
-			atualizarValor()
-			porcentagem()
-
-
-			rend()
-
-			quant.innerHTML = q++
-
+			g.innerHTML = parseInt(acertos/total*100)+"%"
+			r.innerHTML = parseInt(erros/total*100)+"%"
 		}
 	}
 
-	function porcentagem(){
-		ace = parseInt(ac.innerHTML)
-		err = parseInt(er.innerHTML)
-		s = ace+err
-
-		d = ac.innerHTML.split(" ")
-		ac.innerHTML = d[0]
-
-		d = er.innerHTML.split(" ")
-		er.innerHTML = d[0]
-
-		ac.innerHTML = ac.innerHTML+" - "+((ace*100)/s).toFixed(2)+"%"
-		er.innerHTML = er.innerHTML+" - "+((err*100)/s).toFixed(2)+"%"
-	}
-
-
-
-	function atualizarValor(){
-
-		// r1 = Math.floor(Math.random() * (9 - -9) + -9)
-		// r2 = Math.floor(Math.random() * (9 - -9) + -9)
-
-		r1 = Math.floor(Math.random() * (10 - 0)) + 0;
-		r2 = Math.floor(Math.random() * (10 - 0)) + 0;
-
-
-		p1.value = r1
-		p2.value = r2
-
-	}atualizarValor()
-
-
-	n = 0
 	
-	function rend(){
+	
 
-		p = tim.innerHTML
+	valores = {
+		a:0,
+		b:0,
+		c:0
+	}
 
-		if(p.length < 4){
-			p = "0."+p
-			p = p.substr(0,4)
-		}else{
-			p = Math.floor(p/1000)+"."+p%1000
-			p = p.substr(0,4)
-		}
+	op = 0
 
-		if(++n>1){
-			if(resultado)
-				tempos.innerHTML += "<span class='correct'>"+p+"</span>"
-			else
-				tempos.innerHTML += "<span class='incorrect'>"+p+"</span>"
-		}
-
-		mediaa()
-	}	
-
-	function mediaa(){
-
-    notas = tempos.innerHTML.match(/\d+.\d+/g).map( e=> parseFloat(e) )
-
-    a = 0
-    m = 0
-
-    for(i=0;i<notas.length;i++){
-
-        m += notas[i]
-
-        a++
-
-    }
-
-    m /= a
-
-	media.innerHTML = m.toFixed(2)
-
-} 
-
-
-
+	mu.click()
 
 
 </script>
